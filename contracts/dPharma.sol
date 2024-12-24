@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity 0.8.28;
+pragma solidity ^0.8.7;
 import "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
 
 contract dPharma {
@@ -37,8 +37,8 @@ contract dPharma {
     }
 
     // Function to set roles for users
-    function setRole(address user, string memory role) public {
-        roles[user] = role;
+    function setRole(string memory role) public {
+        roles[msg.sender] = role;
     }
     
     // Function to get the role of a user
@@ -109,4 +109,78 @@ contract dPharma {
 
         isPatientListed[_patientId] = true;
     }
+
+    
+    function getDoctorPrescription() public view returns (Prescription[] memory) {
+    uint256 count = 0;
+
+    // First loop: Count matching prescriptions
+    for (uint256 i = 0; i < prescriptions.length; i++) {
+        if (prescriptions[i].doctorId == msg.sender) {
+            count++;
+        }
+    }
+
+    // Create memory array with the exact size
+    Prescription[] memory doctorPrescriptions = new Prescription[](count);
+    uint256 index = 0;
+
+    // Second loop: Populate the memory array
+    for (uint256 i = 0; i < prescriptions.length; i++) {
+        if (prescriptions[i].doctorId == msg.sender) {
+            doctorPrescriptions[index] = prescriptions[i];
+            index++;
+        }
+    }
+
+    return doctorPrescriptions; // Return the array
+    }
+
+function getPharmacyPrescription() public view returns (Prescription[] memory) {
+    uint256 count = 0;
+
+    // First loop: Count matching prescriptions
+    for (uint256 i = 0; i < prescriptions.length; i++) {
+        if (prescriptions[i].pharmacyId == msg.sender) {
+            count++;
+        }
+    }
+
+    // Create memory array with the exact size
+    Prescription[] memory pharmacyPrescriptions = new Prescription[](count);
+    uint256 index = 0;
+
+    // Second loop: Populate the memory array
+    for (uint256 i = 0; i < prescriptions.length; i++) {
+        if (prescriptions[i].pharmacyId == msg.sender) {
+            pharmacyPrescriptions[index] = prescriptions[i];
+            index++;
+        }
+    }
+
+    return pharmacyPrescriptions; // Return the array
+    }
+
+
+    function getPatientPrescription() public view returns(Prescription[] memory){
+        uint count = 0;
+        for(uint i = 0; i < prescriptions.length; i++){
+            if(prescriptions[i].patientId == msg.sender){
+                count++;
+            }
+        }
+
+        Prescription[] memory patientPrescription = new Prescription[](count);
+        uint256 index = 0;
+        for(uint i = 0; i < prescriptions.length; i++){
+            if(prescriptions[i].patientId == msg.sender){
+                patientPrescription[index] = prescriptions[i];
+                index++;
+            }
+        }
+        return patientPrescription;
+    }
+
 }
+
+
